@@ -112,9 +112,9 @@ export default class View {
     const classList = el.classList;
     classList.remove('range', 'range-start', 'range-end', 'selected', 'focused');
 
-    console.log('REFRESH CELL', el, selected, cellVal)
     if (selected == cellVal) {
       classList.add('selected');
+      el.closest('.timepicker-grid-wrapper').scrollTop = 28 * (cellVal  - 3.375)
     }
     if (cellVal === this.focused) {
       classList.add('focused');

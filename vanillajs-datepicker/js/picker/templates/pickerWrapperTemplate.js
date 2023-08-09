@@ -14,6 +14,8 @@ export default optimizeTemplateHTML(`
     </div>
     <div class="datetimepicker-footer">
       <div class="datetimepicker-controls">
+        <button class="apply-btn">Apply</button>
+        <button class="cancel-btn">Cancel</button>
       </div>
     </div>
   </div>`

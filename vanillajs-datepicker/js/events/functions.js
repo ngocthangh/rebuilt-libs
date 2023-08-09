@@ -69,3 +69,13 @@ export function unfocus(datepicker) {
     onBlur();
   }
 }
+
+export function apply(datepicker) {
+  console.log('apply..')
+  datepicker.hide();
+}
+
+export function cancel(datepicker) {
+  console.log('cancel..')
+  datepicker.hide();
+}

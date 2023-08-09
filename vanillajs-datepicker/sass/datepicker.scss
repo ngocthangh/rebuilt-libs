@@ -7,12 +7,17 @@ $white: hsl(0, 0%, 100%) !default;
 $light: hsl(0, 0%, 96%) !default; // white-ter
 $dark: hsl(0, 0%, 21%) !default;  // grey-darker
 $link: hsl(217, 71%, 53%) !default; // blue
+$primary-color: hsl(209, 100%, 36%) !default;
+$text-color: hsl(0, 0%, 20%) !default;
+$grey1: #E5E5E5 !default;
+$light-blue: #B8CFE6 !default;
 
 $grey-dark: color.scale($black, $lightness: 25%) !default;
 $grey-light: color.scale($light, $lightness: -25%) !default;
 $grey-lighter: color.scale($light, $lightness: -10%) !default;
 
 //== datepicker variables ==//
+$dp-max-content-height: 289px !default;
 $dp-background-color: $white !default;
 $dp-border-color: $grey-lighter !default;
 $dp-border-radius: 4px !default;
@@ -28,11 +33,14 @@ $dp-dropdown-z: 20 !default;
 
 $dp-title-background-color: $light !default;
 
-$dp-cell-size-base: 2.25rem !default;
+$dp-cell-size-base: 1.5rem !default;
+$dp-cell-gap: 0.3515625rem !default;
 $dp-cell-focus-background-color: color.scale($light, $lightness: -5%) !default;
 $dp-cell-prevnext-color: hsl(0, 0%, 48%) !default; // grey
 $dp-cell-disabled-color: $grey-lighter !default;
-$dp-cell-selected-background-color: $link !default;
+$dp-cell-font-size: $dp-font-size-small !default;
+$dp-cell-font-color: $text-color !default;
+$dp-cell-selected-background-color: $primary-color !default;
 $dp-cell-selected-color: #fff !default; // link(blue)-invert
 $dp-cell-selected-font-weight: $dp-font-weight-semibold !default;
 $dp-cell-today-background-color: hsl(171, 100%, 41%) !default;  // turquoise (primary)
@@ -51,8 +59,8 @@ $dp-input-in-edit-focus-box-shadow-size: 0 0 0.25em 0.25em !default;
 
 //== calculated variables ==//
 $dp-dow-height: $dp-font-size-normal * $dp-line-height-base !default;
-$dp-dow-font-size: math.div($dp-font-size-small + $dp-font-size-normal, 2) !default;
-$dp-view-width: $dp-cell-size-base * 7 !default;
+$dp-dow-font-size: 0.75rem !default;//math.div($dp-font-size-small + $dp-font-size-normal, 2) !default;
+$dp-view-width: $dp-cell-size-base * 7 + $dp-cell-gap * 8 !default;
 $dp-week-numbers-width: math.percentage(math.div(0.75, 0.75 + 1 * 7)) !default; // 0.75 = small-font, 1 = nomal-font
 $dp-month-year-height: $dp-cell-size-base * 2 !default;
 
@@ -79,6 +87,11 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 
 //== styles ==//
 .datetimepicker-wrapper {
+  box-shadow: $dp-dropdown-shadow;
+  background: $white;
+  padding: 0 !important;
+
+  * { box-sizing: border-box };
 
   &:not(.active) {
     display: none;
@@ -86,10 +99,45 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 
   .datetimepicker-main {
     display: flex;
+    padding: 0;
+    border-bottom: 1px solid $grey1 !important;
+    max-height: $dp-max-content-height !important;
+  }
+
+  .datetimepicker-footer {
+    padding: 15px 17px;
+
+    .datetimepicker-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      button {
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px !important;
+        font-weight: bold;
+        width: 50px;
+        height: 28px;
+
+        &.apply-btn {
+          background: $primary-color !important;
+          color: $white !important;
+          border: none !important;
+        }
+        &.cancel-btn {
+          background: $white !important;
+          color: $primary-color !important;
+          border: 1px solid $light-blue !important;
+        }
+      }
+    }
   }
 }
 .datepicker {
   width: min-content;
+  padding: 30px 24px;
+
 
   // &:not(.active) {
   //   display: none;
@@ -113,27 +161,36 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
   border-radius: $dp-border-radius;
   background-color: $dp-background-color;
 
-  .datepicker-dropdown & {
-    box-shadow: $dp-dropdown-shadow;
-  }
+  // .datepicker-dropdown & {
+  //   box-shadow: $dp-dropdown-shadow;
+  // }
 }
 
 .timepicker {
   .timepicker-picker {
     .timepicker-main {
       display: flex;
-      height: 282px;
+      height: $dp-max-content-height;
+      padding-top: 10px;
 
       .datepicker-view-time {
-        padding: 10px 20px;
+        padding: 29px 38px 10px;
+        border-left: 1px solid $grey1 !important;
+
         .times {
           height: 100%;
           display: flex;
           flex-direction: column;
 
+          .times-header {
+            font-size: 11px;
+          }
+
           .timepicker-grid-wrapper {
             max-height: 100%;
             overflow: auto;
+            margin-top: 8px;
+            scroll-behavior: smooth;
 
             &::-webkit-scrollbar {
               display: none;
@@ -145,19 +202,24 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
               align-items: center;
 
               span {
+                font-size: $dp-cell-font-size;
+                color: $dp-cell-font-color;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 25px;
-                height: 25px;
-                margin-bottom: 5px;
+                width: $dp-cell-size-base;
+                height: $dp-cell-size-base;
+                min-height: $dp-cell-size-base;
+                margin-bottom: 4px;
+                border-radius: 2px;
 
                 &:hover {
-                  background: #f1f3f6;
+                  background: $dp-cell-focus-background-color;
                 }
                 &.selected {
-                  background: #0eabd8;
+                  background: $dp-cell-selected-background-color;
+                  color: $white;
                 }
               }
             }
@@ -171,7 +233,7 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 
 .datepicker-main {
   flex: auto;
-  padding: 2px;
+  margin-top: 20px;
 }
 
 .datepicker-footer {
@@ -189,6 +251,8 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 
 .datepicker-controls {
   display: flex;
+  gap: 1rem;
+  align-items: center;
 
   .datepicker-header & {
     padding: 2px 2px 0;
@@ -224,18 +288,18 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
       justify-content: center;
       margin: 0;
       border: $button-border-width solid $button-border-color;
-      border-radius: $dp-border-radius; // control-radius
+      border-radius: $dp-border-radius !important; // control-radius
       box-shadow: none;
       background-color: $button-background-color;
       cursor: pointer;
       padding: $button-padding-vertical $button-padding-horizontal;
-      height: 2.25em; // control-height
+      height: 28px !important; // control-height
       vertical-align: top;
       text-align: center;
       line-height: $dp-line-height-base;  // control-line-height
       white-space: nowrap;
-      color: $button-color;
-      font-size: $dp-font-size-normal;  // size-normal
+      color: $button-color !important;
+      font-size: 12px !important;  // size-normal
 
       &:focus,
       &:active {
@@ -265,6 +329,12 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
         cursor: not-allowed;
       }
 
+      &:not(.view-switch) {
+        max-width: $dp-cell-size-base;
+        height: $dp-cell-size-base;
+        padding: 0;
+      }
+
       .datepicker-header & {
         @include dp-header-button-common;
 
@@ -285,6 +355,8 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 
   .view-switch {
     flex: auto;
+    border: 1px solid $light-blue !important;
+    border-radius: $dp-border-radius-small !important;
   }
 
   .prev-button,
@@ -312,6 +384,8 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 .datepicker-grid {
   flex-wrap: wrap;
   flex: auto;
+  gap: $dp-cell-gap;
+  margin-top: 2px;
 }
 
 .datepicker {
@@ -323,6 +397,13 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
 
   .days-of-week {
     display: flex;
+    gap: $dp-cell-gap;
+    border-bottom: 1px solid $grey1;
+
+    .dow:first-child,
+    .dow:last-child {
+      color: red;
+    }
   }
 
   .week-numbers {
@@ -342,7 +423,7 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: $dp-border-radius;
+    border-radius: $dp-border-radius-small;
     cursor: default;
     -webkit-touch-callout: none;
     user-select: none;
@@ -352,11 +433,12 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
     height: $dp-dow-height;
     font-size: $dp-dow-font-size;
     font-weight: $dp-font-weight-bold;
+    flex-basis: $dp-cell-size-base;
   }
 
-  .days .dow {
-    @extend %flex-basis-day;
-  }
+  // .days .dow {
+  //   @extend %flex-basis-day;
+  // }
 
   .week {
     flex: auto;
@@ -373,9 +455,15 @@ $dp-one-seventh: math.percentage(math.div(1, 7));
   @extend %flex-basis-day;
 
   height: $dp-cell-size-base;
+  font-size: $dp-cell-font-size;
+  color: $dp-cell-font-color;
+
+  &.day {
+    flex-basis: $dp-cell-size-base;
+  }
 
   &:not(.day) {
-    flex-basis: 25%;
+    flex-basis: calc(25% - $dp-cell-gap);
     height: $dp-month-year-height;
   }
 

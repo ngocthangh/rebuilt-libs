@@ -20,6 +20,8 @@ import {
   triggerDatepickerEvent,
   clearSelection,
   goToOrSelectToday,
+  apply,
+  cancel,
 } from '../events/functions.js';
 import {
   onClickViewSwitch,
@@ -146,9 +148,13 @@ export default class Picker {
     const template = pickerWrapperTemplate.replace(/%buttonClass%/g, config.buttonClass);
     const element = this.element = parseHTML(template).firstChild;
     const [wrapperHeader, wrapperMain, wrapperFooter] = element.children;
-    
+
+    const applyButton = wrapperFooter.firstChild.firstChild;
+    const cancelButton = wrapperFooter.firstChild.lastChild;
+
     const [header, main, footer] = wrapperMain.firstChild.firstChild.children;
-    const [timeHeader, timeMain, timeFooter] = wrapperMain.lastChild.firstChild.children;
+    const timeWrapper = wrapperMain.lastChild.firstChild;
+    const [timeHeader, timeMain, timeFooter] = timeWrapper.children;
     const title = header.firstElementChild;
     const [prevButton, viewSwitch, nextButton] = header.lastElementChild.children;
     const [todayButton, clearButton] = footer.firstChild.children;
@@ -159,10 +165,21 @@ export default class Picker {
       nextButton,
       todayButton,
       clearButton,
+      applyButton,
+      cancelButton
     };
     this.main = main;
+    this.timeWrapper = timeWrapper;
     this.timeMain = timeMain;
     this.controls = controls;
+
+    if (config.format.includes('HH') ||
+      config.format.includes('mm') ||
+      config.format.includes('ss')) {
+        this.timeWrapper.style.display = 'flex'
+    } else {
+      this.timeWrapper.style.display = 'none'
+    }
 
     const elementClass = inputField ? 'dropdown' : 'inline';
     element.classList.add(`datepicker-${elementClass}`);
@@ -180,6 +197,8 @@ export default class Picker {
       [controls.nextButton, 'click', onClickNextButton.bind(null, datepicker)],
       [controls.todayButton, 'click', goToOrSelectToday.bind(null, datepicker)],
       [controls.clearButton, 'click', clearSelection.bind(null, datepicker)],
+      [controls.applyButton, 'click', apply.bind(null, datepicker)],
+      [controls.cancelButton, 'click', cancel.bind(null, datepicker)],
     ]);
 
     // set up views
@@ -397,6 +416,15 @@ export default class Picker {
 
   // Apply the change of the selected dates
   update(viewDate = undefined) {
+    const { config } = this.datepicker;
+    console.log('this.control', this.controls, config.format)
+    if (config.format.includes('HH') ||
+      config.format.includes('mm') ||
+      config.format.includes('ss')) {
+        this.timeWrapper.style.display = 'flex'
+    } else {
+      this.timeWrapper.style.display = 'none'
+    }
     console.log('UPDATE PICKER............', this.views)
     const newViewDate = viewDate === undefined
       ? computeResetViewDate(this.datepicker)

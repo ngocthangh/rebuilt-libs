@@ -102,29 +102,29 @@ function parseFormatString(format) {
   if (typeof format !== 'string') {
     throw new Error("Invalid date format.");
   }
-  if (format in knownFormats) {
-    return knownFormats[format];
-  }
+  // if (format in knownFormats) {
+  //   return knownFormats[format];
+  // }
 
-  // sprit the format string into parts and seprators
-  const separators = format.split(reFormatTokens);
-  const parts = format.match(new RegExp(reFormatTokens, 'g'));
-  if (separators.length === 0 || !parts) {
-    throw new Error("Invalid date format.");
-  }
+  // // sprit the format string into parts and seprators
+  // const separators = format.split(reFormatTokens);
+  // const parts = format.match(new RegExp(reFormatTokens, 'g'));
+  // if (separators.length === 0 || !parts) {
+  //   throw new Error("Invalid date format.");
+  // }
 
-  // collect format functions used in the format
-  const partFormatters = parts.map(token => formatFns[token]);
+  // // collect format functions used in the format
+  // const partFormatters = parts.map(token => formatFns[token]);
 
-  // collect parse function keys used in the format
-  // iterate over parseFns' keys in order to keep the order of the keys.
-  const partParserKeys = Object.keys(parseFns).reduce((keys, key) => {
-    const token = parts.find(part => part[0] !== 'D' && part[0].toLowerCase() === key);
-    if (token) {
-      keys.push(key);
-    }
-    return keys;
-  }, []);
+  // // collect parse function keys used in the format
+  // // iterate over parseFns' keys in order to keep the order of the keys.
+  // const partParserKeys = Object.keys(parseFns).reduce((keys, key) => {
+  //   const token = parts.find(part => part[0] !== 'D' && part[0].toLowerCase() === key);
+  //   if (token) {
+  //     keys.push(key);
+  //   }
+  //   return keys;
+  // }, []);
 
   return knownFormats[format] = {
     parser(dateStr, locale) {
@@ -192,6 +192,7 @@ export function parseDate(dateStr, format, locale, timeArr = [0, 0, 0, 0]) {
 }
 
 export function formatDate(date, format, locale) {
+  console.log('formatDate', {date, format, locale})
   if (isNaN(date) || (!date && date !== 0)) {
     return '';
   }
