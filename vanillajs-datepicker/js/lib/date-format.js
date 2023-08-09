@@ -142,7 +142,6 @@ function parseFormatString(format) {
         }
         return dtParts;
       }, {});
-console.log('dateParts', dateStr, locale, dateParts)
       // iterate over partParserkeys so that the parsing is made in the oder
       // of year, month and day to prevent the day parser from correcting last
       // day of month wrongly
@@ -152,11 +151,9 @@ console.log('dateParts', dateStr, locale, dateParts)
         return isNaN(newDate) ? origDate : newDate;
       }, today());
 
-      console.log('parser date', res)
       return res;
     },
     formatter(date, locale) {
-      console.log('format', format)
       return formatDateFns(date, format)
       // return dayjs(date).format(format)
   
@@ -165,7 +162,6 @@ console.log('dateParts', dateStr, locale, dateParts)
       }, '');
       // separators' length is always parts' length + 1,
       const res = dateStr += lastItemOf(separators)
-      console.log('formatter date', date, locale, res)
       return res;
     },
   };
@@ -192,7 +188,6 @@ export function parseDate(dateStr, format, locale, timeArr = [0, 0, 0, 0]) {
 }
 
 export function formatDate(date, format, locale) {
-  console.log('formatDate', {date, format, locale})
   if (isNaN(date) || (!date && date !== 0)) {
     return '';
   }

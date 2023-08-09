@@ -71,11 +71,19 @@ export function unfocus(datepicker) {
 }
 
 export function apply(datepicker) {
-  console.log('apply..')
   datepicker.hide();
 }
 
 export function cancel(datepicker) {
-  console.log('cancel..')
+  const { inputField, originValue, originDates, originTimes } = datepicker;
+  inputField.value = originValue;
+  datepicker.dates = originDates;
+  datepicker.times = originTimes;
+  datepicker.timeViews.hour.selected = originTimes.hour
+  datepicker.timeViews.minute.selected = originTimes.minute
+  datepicker.timeViews.second.selected = originTimes.second
+  datepicker.timeViews.hour.refresh()
+  datepicker.timeViews.minute.refresh()
+  datepicker.timeViews.second.refresh()
   datepicker.hide();
 }

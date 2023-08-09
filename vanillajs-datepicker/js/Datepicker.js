@@ -15,6 +15,7 @@ import {
   onMousedown,
   onClickInput,
   onPaste,
+  onChange
 } from './events/elementListeners.js';
 import {onClickOutside} from './events/otherListeners.js';
 
@@ -95,7 +96,6 @@ function refreshUI(datepicker, mode = 3, quickRender = true, viewDate = undefine
 }
 
 function setDate(datepicker, inputDates, options, inputTimes, isMinView = true) {
-  console.log('SET DATE', {datepicker, inputDates, options, inputTimes, isMinView})
   const defaultTime = {
     hour: 0,
     minute: 0,
@@ -114,8 +114,6 @@ function setDate(datepicker, inputDates, options, inputTimes, isMinView = true) 
   } = newTimes || defaultTime;
   datepicker.times = newTimes;
 
-  console.log('newTimes', newTimes)
-
   const config = datepicker.config;
   let {clear, render, autohide, revert, forceRefresh, viewDate} = options;
   if (render === undefined) {
@@ -128,12 +126,12 @@ function setDate(datepicker, inputDates, options, inputTimes, isMinView = true) 
   }
   viewDate = parseDate(viewDate, config.format, config.locale, [hour, minute, second]);
   const newDates = processInputDates(datepicker, inputDates, clear);
-  console.log('set date', {datepicker, inputDates, options, viewDate, inputDates, clear, newDates})
+
   if (!newDates && !revert && !inputTimes) {
     return;
   }
   const timeViewUpdate = inputTimes && Object.keys(inputTimes)[0];
-  console.log('refresh ui', timeViewUpdate)
+
   if (newDates && newDates.toString() !== datepicker.dates.toString()) {
     datepicker.dates = newDates;
     refreshUI(datepicker, render ? 3 : 1, true, viewDate, timeViewUpdate);
@@ -242,6 +240,7 @@ export default class Datepicker {
         [inputField, 'mousedown', onMousedown.bind(null, this)],
         [inputField, 'click', onClickInput.bind(null, this)],
         [inputField, 'paste', onPaste.bind(null, this)],
+        [inputField, 'keyup', onChange.bind(null, this)],
         // To detect a click on outside, just listening to mousedown is enough,
         // no need to listen to touchstart.
         // Actually, listening to touchstart can be a problem because, while
@@ -537,7 +536,6 @@ export default class Datepicker {
    *     config option if none is selected
    */
   setTime(...args) {
-    console.log('SET TIME', [...args])
     const [inputTime, isMinView] = [...args];
     const opts = {};
     const lastArg = lastItemOf(args);
@@ -550,7 +548,6 @@ export default class Datepicker {
       Object.assign(opts, dates.pop());
     }
 
-    console.log('CALL SET DATE', this, this.dates, opts, inputTime, isMinView)
     setDate(this, this.dates, opts, inputTime, isMinView);
   }
 

@@ -212,3 +212,10 @@ export function onPaste(datepicker, ev) {
     datepicker.enterEditMode();
   }
 }
+
+export function onChange(datepicker, ev) {
+  const {config} = datepicker
+  if (new RegExp('^' + config.format.replace(/\w/g, '\\w') + '$').test(ev.target.value)) {
+    datepicker.hide();
+  }
+}

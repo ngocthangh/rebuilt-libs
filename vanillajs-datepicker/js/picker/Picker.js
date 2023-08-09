@@ -172,6 +172,7 @@ export default class Picker {
     this.timeWrapper = timeWrapper;
     this.timeMain = timeMain;
     this.controls = controls;
+    this.datepicker.originValue = inputField.value;
 
     if (config.format.includes('HH') ||
       config.format.includes('mm') ||
@@ -213,6 +214,13 @@ export default class Picker {
       minute: new MinutesView(this),
       second: new SecondsView(this)
     };
+    datepicker.timeViews = this.timeViews
+    datepicker.originTimes = {
+      hour: 0,
+      minute: 0,
+      second: 0
+    }
+
     this.currentView = this.views[config.startView];
 
     this.currentView.render();
@@ -223,6 +231,9 @@ export default class Picker {
       this.timeMain.appendChild(view.element);
       this.views.push(view);
     });
+    if (!config.format.includes('ss')) {
+      this.timeViews.second.element.style.display = 'none';
+    }
 
     if (config.container) {
       config.container.appendChild(this.element);
@@ -251,6 +262,26 @@ export default class Picker {
     const {datepicker, element} = this;
     const inputField = datepicker.inputField;
     if (inputField) {
+      datepicker.originValue = inputField.value;
+      datepicker.originDates = datepicker.dates;
+      datepicker.originTimes = datepicker.times || datepicker.originTimes;
+      if (!datepicker.config.format.includes('ss') &&
+        !datepicker.config.format.includes('SS')) {
+        this.timeViews.second.element.style.display = 'none';
+      } else {
+        this.timeViews.second.element.style.display = 'block';
+      }
+      if (!datepicker.config.format.includes('mm')) {
+        this.timeViews.minute.element.style.display = 'none';
+      } else {
+        this.timeViews.minute.element.style.display = 'block';
+      }
+      if (!datepicker.config.format.includes('HH') &&
+          !datepicker.config.format.includes('hh')) {
+        this.timeViews.hour.element.style.display = 'none';
+      } else {
+        this.timeViews.hour.element.style.display = 'block'
+      }
       // ensure picker's direction matches input's
       const inputDirection = getTextDirection(inputField);
       if (inputDirection !== getTextDirection(getParent(element))) {
@@ -417,7 +448,7 @@ export default class Picker {
   // Apply the change of the selected dates
   update(viewDate = undefined) {
     const { config } = this.datepicker;
-    console.log('this.control', this.controls, config.format)
+
     if (config.format.includes('HH') ||
       config.format.includes('mm') ||
       config.format.includes('ss')) {
@@ -425,7 +456,7 @@ export default class Picker {
     } else {
       this.timeWrapper.style.display = 'none'
     }
-    console.log('UPDATE PICKER............', this.views)
+
     const newViewDate = viewDate === undefined
       ? computeResetViewDate(this.datepicker)
       : viewDate;
@@ -441,7 +472,6 @@ export default class Picker {
   render(quickRender = true, timeViewUpdate = '') {
     if (timeViewUpdate) {
       const timeView = this.timeViews[timeViewUpdate];
-      console.log('RENDER...', timeView, this._renderMethod)
       timeView && (quickRender && this._renderMethod ? timeView[this._renderMethod]() : timeView.render());
     } else {
       const {currentView, datepicker, _oldView: oldView} = this;

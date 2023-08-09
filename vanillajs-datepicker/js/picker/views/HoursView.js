@@ -20,7 +20,6 @@ export default class HoursView extends ViewTime {
       this.dow = inner.firstChild;
       this.grid = inner.lastChild.firstChild;
       this.element.appendChild(inner);
-      console.log('this.grid', this.dow, this.grid)
     }
     super.init(options);
   }
@@ -109,7 +108,6 @@ export default class HoursView extends ViewTime {
 
   // Apply update on the focused date to view's settings
   updateFocus() {
-    console.log('update focus hour')
     // const viewDate = new Date(this.picker.viewDate);
     // const viewYear = viewDate.getFullYear();
     // const viewMonth = viewDate.getMonth();
@@ -125,7 +123,6 @@ export default class HoursView extends ViewTime {
   // Apply update on the selected dates to view's settings
   updateSelection() {
     const {times = {hour: 0}} = this.picker.datepicker;
-    console.log('update selected hour', times)
     this.selected = times.hour;
   }
 

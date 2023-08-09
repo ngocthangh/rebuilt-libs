@@ -98,7 +98,6 @@ export default class View {
         classList.add('range-end');
       }
     }
-  // console.log('check selected', selected, el.dataset.value, selected.includes(+el.dataset.value))
     
     if ((this.isMinView && selected.map(d => new Date(d).setHours(0, 0, 0, 0)).includes(cellVal)) ||
       (!this.isMinView && selected.includes(+el.dataset.value))) {
@@ -125,7 +124,6 @@ export default class View {
     if (cellVal === rangeEnd) {
       classList.add('range-end');
     }
-    // console.log('refreshCell check selected', selected, el.dataset.value, selected.includes(+el.dataset.value))
     if ((this.isMinView && selected.map(d => new Date(d).setHours(0, 0, 0, 0)).includes(cellVal)) ||
       (!this.isMinView && selected.includes(+el.dataset.value))) {
       classList.add('selected');

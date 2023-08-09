@@ -70,7 +70,6 @@ export default class YearsView extends View {
     this.selected = dates.reduce((years, timeValue) => {
       return pushUnique(years, startOfYearPeriod(timeValue, this.step));
     }, []);
-    console.log('selected year', this.selected)
     if (rangepicker && rangepicker.dates) {
       this.range = rangepicker.dates.map(timeValue => {
         if (timeValue !== undefined) {

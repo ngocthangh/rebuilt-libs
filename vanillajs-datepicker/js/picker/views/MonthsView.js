@@ -95,7 +95,6 @@ export default class MonthsView extends View {
       }
       return selected;
     }, {});
-    console.log('selected month', this.selected)
     if (rangepicker && rangepicker.dates) {
       this.range = rangepicker.dates.map(timeValue => {
         const date = new Date(timeValue);

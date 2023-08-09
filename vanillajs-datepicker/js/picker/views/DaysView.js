@@ -128,7 +128,6 @@ export default class DaysView extends View {
     if (rangepicker) {
       this.range = rangepicker.dates;
     }
-    console.log('date.selected', this.selected)
   }
 
    // Update the entire view UI
