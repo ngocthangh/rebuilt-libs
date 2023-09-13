@@ -85,5 +85,5 @@ export function cancel(datepicker) {
   datepicker.timeViews.hour.refresh()
   datepicker.timeViews.minute.refresh()
   datepicker.timeViews.second.refresh()
-  datepicker.hide();
+  
 }

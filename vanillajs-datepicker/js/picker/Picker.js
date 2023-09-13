@@ -261,6 +261,18 @@ export default class Picker {
 
     const {datepicker, element} = this;
     const inputField = datepicker.inputField;
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      if (inputField.selectionStart <= 10) {
+        this.timeMain.style.display = 'none'
+        this.main.parentElement.parentElement.style.display = 'block'
+      } else {
+        this.timeMain.style.display = 'flex'
+        this.main.parentElement.parentElement.style.display = 'none'
+      }
+    }
+
     if (inputField) {
       datepicker.originValue = inputField.value;
       datepicker.originDates = datepicker.dates;

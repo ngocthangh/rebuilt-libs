@@ -173,7 +173,7 @@ export function onKeydown(datepicker, ev) {
 
 export function onFocus(datepicker) {
   if (datepicker.config.showOnFocus && !datepicker._showing) {
-    datepicker.show();
+    setTimeout(() => datepicker.show(), 200)
   }
 }
 
@@ -190,6 +190,10 @@ export function onMousedown(datepicker, ev) {
 }
 
 export function onClickInput(datepicker, ev) {
+  if (datepicker.picker.active) {
+    datepicker.hide()
+    return;
+  }
   const el = ev.target;
   if (!el._clicking) {
     return;
