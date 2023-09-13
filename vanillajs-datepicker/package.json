@@ -1,6 +1,6 @@
 {
   "name": "@antscorp/datepicker",
-  "version": "1.0.1-beta.10",
+  "version": "1.0.1-beta.11",
   "description": "A vanilla JavaScript remake of bootstrap-datepicker for Bulma and other CSS frameworks 1.3.3",
   "type": "module",
   "module": "js/main.js",
