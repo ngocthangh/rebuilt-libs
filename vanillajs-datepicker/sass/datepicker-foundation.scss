@@ -5,8 +5,10 @@ $dp-border-color: $light-gray !default;
 $dp-border-radius: $global-radius !default;
 $dp-border-radius-small: $global-radius !default;
 $dp-line-height-base: $global-lineheight !default;
-$dp-font-size-normal: 1rem !default;
-$dp-font-size-small: 0.75rem !default;
+// $dp-font-size-normal: 1rem !default;
+// $dp-font-size-small: 0.75rem !default;
+$dp-font-size-normal: 16px !default;
+$dp-font-size-small: 12px !default;
 $dp-font-weight-semibold: semibold !default;
 $dp-font-weight-bold: bold !default;
 $dp-dropdown-offset: 4px !default;
@@ -15,7 +17,8 @@ $dp-dropdown-z: 10 !default;
 
 $dp-title-background-color: $light-gray !default;
 
-$dp-cell-size-base: 2.25rem !default;
+// $dp-cell-size-base: 2.25rem !default;
+$dp-cell-size-base: 36px !default;
 $dp-cell-focus-background-color: color.scale($white, $lightness: -5%) !default;
 $dp-cell-prevnext-color: $medium-gray !default;
 $dp-cell-disabled-color: $light-gray !default;

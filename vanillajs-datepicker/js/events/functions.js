@@ -79,11 +79,11 @@ export function cancel(datepicker) {
   inputField.value = originValue;
   datepicker.dates = originDates;
   datepicker.times = originTimes;
-  datepicker.timeViews.hour.selected = originTimes.hour
-  datepicker.timeViews.minute.selected = originTimes.minute
-  datepicker.timeViews.second.selected = originTimes.second
-  datepicker.timeViews.hour.refresh()
-  datepicker.timeViews.minute.refresh()
-  datepicker.timeViews.second.refresh()
-  
+  datepicker.timeViews.hour.selected = originTimes.hour;
+  datepicker.timeViews.minute.selected = originTimes.minute;
+  datepicker.timeViews.second.selected = originTimes.second;
+  datepicker.timeViews.hour.refresh();
+  datepicker.timeViews.minute.refresh();
+  datepicker.timeViews.second.refresh();
+  datepicker.hide();
 }

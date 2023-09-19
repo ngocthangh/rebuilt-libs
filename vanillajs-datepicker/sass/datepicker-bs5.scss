@@ -16,7 +16,8 @@ $dp-dropdown-z: $zindex-dropdown !default;
 
 $dp-title-background-color: $light !default;
 
-$dp-cell-size-base: 2.25rem !default;
+// $dp-cell-size-base: 2.25rem !default;
+$dp-cell-size-base: 36px !default;
 $dp-cell-focus-background-color: color.scale($gray-200, $lightness: -2.5%) !default;
 $dp-cell-prevnext-color: map.get($colors, 'gray') !default;
 $dp-cell-disabled-color: rgba($body-color, .5) !default;
