@@ -1,29 +1,4 @@
-import { Options } from './options'
-
-const WOFF = 'application/font-woff'
-const JPEG = 'image/jpeg'
-const mimes: { [key: string]: string } = {
-  woff: WOFF,
-  woff2: WOFF,
-  ttf: 'application/font-truetype',
-  eot: 'application/vnd.ms-fontobject',
-  png: 'image/png',
-  jpg: JPEG,
-  jpeg: JPEG,
-  gif: 'image/gif',
-  tiff: 'image/tiff',
-  svg: 'image/svg+xml',
-}
-
-export function getExtension(url: string): string {
-  const match = /\.([^./]*?)$/g.exec(url)
-  return match ? match[1] : ''
-}
-
-export function getMimeType(url: string): string {
-  const extension = getExtension(url).toLowerCase()
-  return mimes[extension] || ''
-}
+import type { Options } from './types'
 
 export function resolveUrl(url: string, baseUrl: string | null): string {
   // url is absolute already
@@ -57,19 +32,7 @@ export function resolveUrl(url: string, baseUrl: string | null): string {
   return a.href
 }
 
-export function isDataUrl(url: string) {
-  return url.search(/^(data:)/) !== -1
-}
-
-export function makeDataUrl(content: string, mimeType: string) {
-  return `data:${mimeType};base64,${content}`
-}
-
-export function parseDataUrlContent(dataURL: string) {
-  return dataURL.split(/,/)[1]
-}
-
-export const uuid = (function uuid() {
+export const uuid = (() => {
   // generate uuid for className of pseudo elements.
   // We should not use GUIDs, otherwise pseudo elements sometimes cannot be captured.
   let counter = 0
@@ -85,36 +48,62 @@ export const uuid = (function uuid() {
   }
 })()
 
-export const delay =
-  <T>(ms: number) =>
-  (args: T) =>
-    new Promise<T>((resolve) => setTimeout(() => resolve(args), ms))
+export function delay<T>(ms: number) {
+  return (args: T) =>
+    new Promise<T>((resolve) => {
+      setTimeout(() => resolve(args), ms)
+    })
+}
 
 export function toArray<T>(arrayLike: any): T[] {
   const arr: T[] = []
 
-  for (let i = 0, l = arrayLike.length; i < l; i += 1) {
+  for (let i = 0, l = arrayLike.length; i < l; i++) {
     arr.push(arrayLike[i])
   }
 
   return arr
 }
 
-function px(node: HTMLElement, styleProperty: string) {
-  const val = window.getComputedStyle(node).getPropertyValue(styleProperty)
-  return parseFloat(val.replace('px', ''))
+let styleProps: string[] | null = null
+export function getStyleProperties(options: Options = {}): string[] {
+  if (styleProps) {
+    return styleProps
+  }
+
+  if (options.includeStyleProperties) {
+    styleProps = options.includeStyleProperties
+    return styleProps
+  }
+
+  styleProps = toArray(window.getComputedStyle(document.documentElement))
+
+  return styleProps
 }
 
-export function getNodeWidth(node: HTMLElement) {
+function px(node: HTMLElement, styleProperty: string) {
+  const win = node.ownerDocument.defaultView || window
+  const val = win.getComputedStyle(node).getPropertyValue(styleProperty)
+  return val ? parseFloat(val.replace('px', '')) : 0
+}
+
+function getNodeWidth(node: HTMLElement) {
   const leftBorder = px(node, 'border-left-width')
   const rightBorder = px(node, 'border-right-width')
   return node.clientWidth + leftBorder + rightBorder
 }
 
-export function getNodeHeight(node: HTMLElement) {
+function getNodeHeight(node: HTMLElement) {
   const topBorder = px(node, 'border-top-width')
   const bottomBorder = px(node, 'border-bottom-width')
   return node.clientHeight + topBorder + bottomBorder
+}
+
+export function getImageSize(targetNode: HTMLElement, options: Options = {}) {
+  const width = options.width || getNodeWidth(targetNode)
+  const height = options.height || getNodeHeight(targetNode)
+
+  return { width, height }
 }
 
 export function getPixelRatio() {
@@ -140,18 +129,47 @@ export function getPixelRatio() {
   return ratio || window.devicePixelRatio || 1
 }
 
+// @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas#maximum_canvas_size
+const canvasDimensionLimit = 16384
+
+export function checkCanvasDimensions(canvas: HTMLCanvasElement) {
+  if (
+    canvas.width > canvasDimensionLimit ||
+    canvas.height > canvasDimensionLimit
+  ) {
+    if (
+      canvas.width > canvasDimensionLimit &&
+      canvas.height > canvasDimensionLimit
+    ) {
+      if (canvas.width > canvas.height) {
+        canvas.height *= canvasDimensionLimit / canvas.width
+        canvas.width = canvasDimensionLimit
+      } else {
+        canvas.width *= canvasDimensionLimit / canvas.height
+        canvas.height = canvasDimensionLimit
+      }
+    } else if (canvas.width > canvasDimensionLimit) {
+      canvas.height *= canvasDimensionLimit / canvas.width
+      canvas.width = canvasDimensionLimit
+    } else {
+      canvas.width *= canvasDimensionLimit / canvas.height
+      canvas.height = canvasDimensionLimit
+    }
+  }
+}
+
 export function canvasToBlob(
   canvas: HTMLCanvasElement,
   options: Options = {},
 ): Promise<Blob | null> {
   if (canvas.toBlob) {
-    return new Promise((resolve) =>
+    return new Promise((resolve) => {
       canvas.toBlob(
         resolve,
         options.type ? options.type : 'image/png',
         options.quality ? options.quality : 1,
-      ),
-    )
+      )
+    })
   }
 
   return new Promise((resolve) => {
@@ -181,10 +199,14 @@ export function canvasToBlob(
 export function createImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image()
-    img.onload = () => resolve(img)
+    img.onload = () => {
+      img.decode().then(() => {
+        requestAnimationFrame(() => resolve(img))
+      })
+    }
     img.onerror = reject
     img.crossOrigin = 'anonymous'
-    img.decoding = 'sync'
+    img.decoding = 'async'
     img.src = url
   })
 }
@@ -217,6 +239,23 @@ export async function nodeToDataURL(
 
   svg.appendChild(foreignObject)
   foreignObject.appendChild(node)
-
   return svgToDataURL(svg)
+}
+
+export const isInstanceOfElement = <
+  T extends typeof Element | typeof HTMLElement | typeof SVGImageElement,
+>(
+  node: Element | HTMLElement | SVGImageElement,
+  instance: T,
+): node is T['prototype'] => {
+  if (node instanceof instance) return true
+
+  const nodePrototype = Object.getPrototypeOf(node)
+
+  if (nodePrototype === null) return false
+
+  return (
+    nodePrototype.constructor.name === instance.name ||
+    isInstanceOfElement(nodePrototype, instance)
+  )
 }
